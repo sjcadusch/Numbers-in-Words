@@ -19,16 +19,16 @@
 <body>
   <main class="app">
   <h1>Random Number in Words</h1>
-  <p>Generate a random number from 0 to 10,000 and display it in words only.</p>
+  <p>Generate a random number from 0 to 100,000,000,000 and display it in words only.</p>
 
   <div class="row">
     <label>
       Minimum
-      <input id="min" type="number" min="0" max="10000" value="0" />
+      <input id="min" type="number" min="0" max="100000000000" value="0" />
     </label>
     <label>
       Maximum
-      <input id="max" type="number" min="0" max="10000" value="10000" />
+      <input id="max" type="number" min="0" max="100000000000" value="100000000000" />
     </label>
   </div>
 
@@ -38,8 +38,8 @@
 
   <script>
     function numberToWords(number) {
-      if (number < 0 || number > 10000 || !Number.isInteger(number)) {
-        throw new Error('Number must be an integer between 0 and 10,000.');
+      if (number < 0 || number > 100000000000 || !Number.isInteger(number)) {
+        throw new Error('Number must be an integer between 0 and 100,000,000,000.');
       }
 
       const ones = [
@@ -65,15 +65,25 @@
           : `${ones[hundred]} hundred and ${numberToWords(remainder)}`;
       }
 
-      if (number < 10000) {
-        const thousand = Math.floor(number / 1000);
-        const remainder = number % 1000;
-        if (remainder === 0) return `${ones[thousand]} thousand`;
-        const joiner = remainder < 100 ? ' and ' : ' ';
-        return `${ones[thousand]} thousand${joiner}${numberToWords(remainder)}`;
+      if (number === 100000000000) return 'one hundred billion';
+
+      const scales = [
+        { value: 1000000000, name: 'billion' },
+        { value: 1000000, name: 'million' },
+        { value: 1000, name: 'thousand' }
+      ];
+
+      for (const scale of scales) {
+        if (number >= scale.value) {
+          const major = Math.floor(number / scale.value);
+          const remainder = number % scale.value;
+          if (remainder === 0) return `${numberToWords(major)} ${scale.name}`;
+          const joiner = remainder < 100 ? ' and ' : ' ';
+          return `${numberToWords(major)} ${scale.name}${joiner}${numberToWords(remainder)}`;
+        }
       }
 
-      return 'ten thousand';
+      throw new Error('Unhandled number conversion case.');
     }
 
     function randomInt(min, max) {
@@ -96,8 +106,8 @@
         error.textContent = 'Please enter whole numbers for minimum and maximum.';
         return;
       }
-      if (min < 0 || max > 10000) {
-        error.textContent = 'Range must stay within 0 to 10,000.';
+      if (min < 0 || max > 100000000000) {
+        error.textContent = 'Range must stay within 0 to 100,000,000,000.';
         return;
       }
       if (min > max) {
