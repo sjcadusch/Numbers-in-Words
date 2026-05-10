@@ -5,18 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Random Number in Words</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #BCFCBF; }
-    .app { text-align: center; width: min(720px, 92vw); }
-    .row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; justify-content: center; }
+    body { font-family: Arial, sans-serif; margin: 2rem; max-width: 720px; }
+    .row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
     label { display: flex; flex-direction: column; gap: 0.25rem; }
     input { padding: 0.5rem; width: 180px; }
     button { padding: 0.6rem 1rem; cursor: pointer; }
-    #result { margin-top: 1rem; font-size: 2.4rem; font-weight: bold; text-align: center; }
+    #result { margin-top: 1rem; font-size: 1.2rem; font-weight: bold; }
     #error { color: #b00020; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
-  <main class="app">
   <h1>Random Number in Words</h1>
   <p>Generate a random number from 0 to 10,000 and display it in words only.</p>
 
@@ -110,6 +108,5 @@
 
     document.getElementById('generate').addEventListener('click', generateWords);
   </script>
-  </main>
 </body>
 </html>
