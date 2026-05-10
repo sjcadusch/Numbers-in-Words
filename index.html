@@ -1,0 +1,126 @@
+  <!-- Re-applied web UI after merge mismatch. -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Number in Words</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; background: #BCFCBF; padding-top: 2rem; }
+    .app { text-align: center; width: min(720px, 92vw); }
+    .row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; justify-content: center; }
+    label { display: flex; flex-direction: column; gap: 0.25rem; }
+    input { padding: 0.5rem; width: 180px; }
+    button { padding: 0.6rem 1rem; cursor: pointer; }
+    #result { margin-top: 3rem; font-size: 2.4rem; font-weight: bold; text-align: center; }
+    #error { color: #b00020; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <main class="app">
+  <h1>Random Number in Words</h1>
+  <p>Generate a random number from 0 to 100,000,000,000 and display it in words only.</p>
+
+  <div class="row">
+    <label>
+      Minimum
+      <input id="min" type="number" min="0" max="100000000000" value="0" />
+    </label>
+    <label>
+      Maximum
+      <input id="max" type="number" min="0" max="100000000000" value="100000000000" />
+    </label>
+  </div>
+
+  <button id="generate">Generate</button>
+  <div id="error"></div>
+  <div id="result"></div>
+
+  <script>
+    function numberToWords(number) {
+      if (number < 0 || number > 100000000000 || !Number.isInteger(number)) {
+        throw new Error('Number must be an integer between 0 and 100,000,000,000.');
+      }
+
+      const ones = [
+        'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+        'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen',
+        'eighteen', 'nineteen'
+      ];
+      const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+      if (number < 20) return ones[number];
+
+      if (number < 100) {
+        const ten = Math.floor(number / 10);
+        const remainder = number % 10;
+        return remainder === 0 ? tens[ten] : `${tens[ten]}-${ones[remainder]}`;
+      }
+
+      if (number < 1000) {
+        const hundred = Math.floor(number / 100);
+        const remainder = number % 100;
+        return remainder === 0
+          ? `${ones[hundred]} hundred`
+          : `${ones[hundred]} hundred and ${numberToWords(remainder)}`;
+      }
+
+      if (number === 100000000000) return 'one hundred billion';
+
+      const scales = [
+        { value: 1000000000, name: 'billion' },
+        { value: 1000000, name: 'million' },
+        { value: 1000, name: 'thousand' }
+      ];
+
+      for (const scale of scales) {
+        if (number >= scale.value) {
+          const major = Math.floor(number / scale.value);
+          const remainder = number % scale.value;
+          if (remainder === 0) return `${numberToWords(major)} ${scale.name}`;
+          const joiner = remainder < 100 ? ' and ' : ' ';
+          return `${numberToWords(major)} ${scale.name}${joiner}${numberToWords(remainder)}`;
+        }
+      }
+
+      throw new Error('Unhandled number conversion case.');
+    }
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateWords() {
+      const minInput = document.getElementById('min');
+      const maxInput = document.getElementById('max');
+      const result = document.getElementById('result');
+      const error = document.getElementById('error');
+
+      error.textContent = '';
+      result.textContent = '';
+
+      const min = Number(minInput.value);
+      const max = Number(maxInput.value);
+
+      if (!Number.isInteger(min) || !Number.isInteger(max)) {
+        error.textContent = 'Please enter whole numbers for minimum and maximum.';
+        return;
+      }
+      if (min < 0 || max > 100000000000) {
+        error.textContent = 'Range must stay within 0 to 100,000,000,000.';
+        return;
+      }
+      if (min > max) {
+        error.textContent = 'Minimum must be less than or equal to maximum.';
+        return;
+      }
+
+      const value = randomInt(min, max);
+      result.textContent = numberToWords(value);
+    }
+
+    document.getElementById('generate').addEventListener('click', generateWords);
+  </script>
+  </main>
+</body>
+</html>
